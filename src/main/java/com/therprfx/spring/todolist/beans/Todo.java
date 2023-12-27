@@ -3,6 +3,7 @@ package com.therprfx.spring.todolist.beans;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Todo {
 

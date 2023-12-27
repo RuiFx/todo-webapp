@@ -12,7 +12,6 @@
     <table class="table table-light table-striped">
         <thead>
         <tr class="table-dark">
-            <th scope="col">id</th>
             <th>Description</th>
             <th>Target Date</th>
             <th>It is Done?</th>
@@ -22,7 +21,6 @@
         <tbody>
         <c:forEach items="${tasks}" var="task">
             <tr>
-                <td>${task.id}</td>
                 <td>${task.description}</td>
                 <td>${task.targetDate}</td>
                 <td>${task.done}</td>

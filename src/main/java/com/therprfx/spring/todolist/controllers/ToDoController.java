@@ -40,7 +40,7 @@ public class ToDoController {
     @RequestMapping(value = "add-task", method = RequestMethod.POST)
     public String addNewTask(ModelMap modelMap, @Valid Todo newTask, BindingResult result) {
         //Todo validations
-        toDoService.addNewTask((String) modelMap.get("username"), newTask.getDescription(), LocalDate.now().plusYears(1), false);
+        toDoService.addNewTask((String) modelMap.get("username"), newTask.getDescription(), newTask.getTargetDate(), false);
         return "redirect:task-list";
     }
 
@@ -60,7 +60,13 @@ public class ToDoController {
 
     @RequestMapping(value = "edit-task", method = RequestMethod.POST)
     public String updateTask(ModelMap modelMap, @Valid Todo editedTask) {
+        editedTask.setUsername((String)modelMap.get("username"));
         toDoService.updateTask(editedTask);
+        return "redirect:task-list";
+    }
+
+    @RequestMapping(value = "cancel-edit-task", method = RequestMethod.POST)
+    public String cancelUpdateTask() {
         return "redirect:task-list";
     }
 }
