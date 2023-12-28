@@ -1,16 +1,24 @@
 package com.therprfx.spring.todolist.beans;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Entity
+@Table(name = "tasks")
 public class Todo {
 
+    @Id
+    @GeneratedValue
     private int id;
     private String username;
 
-    @Size(min=10, message="This field can't be empty and should have at least 10 characters")
+    @Size(min = 10, message = "This field can't be empty and should have at least 10 characters")
     private String description;
     private LocalDate targetDate;
     private boolean done;
@@ -21,6 +29,9 @@ public class Todo {
         this.description = description;
         this.targetDate = targetDate;
         this.done = done;
+    }
+
+    public Todo() {
     }
 
     public int getId() {

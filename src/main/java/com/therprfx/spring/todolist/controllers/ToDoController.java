@@ -3,6 +3,8 @@ package com.therprfx.spring.todolist.controllers;
 import com.therprfx.spring.todolist.beans.Todo;
 import com.therprfx.spring.todolist.service.ToDoService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,17 +24,24 @@ public class ToDoController {
         this.toDoService = toDoService;
     }
 
+    @RequestMapping("welcome")
+    public String welcomePage() {
+        return "welcome";
+    }
+
     @RequestMapping("task-list")
     public String listAllTasks(ModelMap modelMap) {
-        List<Todo> taskList = toDoService.findByUsername("rprfelix");
+        String username = getLoggedInUsername(modelMap);
+        List<Todo> taskList = toDoService.findByUsername(username);
         modelMap.addAttribute("tasks", taskList);
         return "tasklist";
     }
 
     @RequestMapping(value = "add-task", method = RequestMethod.GET)
     public String showNewTaskForm(ModelMap modelMap) {
-        Todo newTask = new Todo(0, (String) modelMap.get("username"), "Description", LocalDate.now().plusYears(1), false);
-        modelMap.addAttribute("newTaskForm", newTask);
+        String username = getLoggedInUsername(modelMap);
+        Todo newTask = new Todo(0, username, "Description", LocalDate.now().plusYears(1), false);
+        modelMap.put("newTaskForm", newTask);
         modelMap.put("action", "Add Task");
         return "addnewtask";
     }
@@ -40,12 +49,13 @@ public class ToDoController {
     @RequestMapping(value = "add-task", method = RequestMethod.POST)
     public String addNewTask(ModelMap modelMap, @Valid Todo newTask, BindingResult result) {
         //Todo validations
-        toDoService.addNewTask((String) modelMap.get("username"), newTask.getDescription(), newTask.getTargetDate(), false);
+        String username = getLoggedInUsername(modelMap);
+        toDoService.addNewTask(username, newTask.getDescription(), newTask.getTargetDate(), false);
         return "redirect:task-list";
     }
 
-    @RequestMapping( "delete-task")
-    public String deleteTask(@RequestParam int id){
+    @RequestMapping("delete-task")
+    public String deleteTask(@RequestParam int id) {
         toDoService.deleteById(id);
         return "redirect:task-list";
     }
@@ -60,7 +70,8 @@ public class ToDoController {
 
     @RequestMapping(value = "edit-task", method = RequestMethod.POST)
     public String updateTask(ModelMap modelMap, @Valid Todo editedTask) {
-        editedTask.setUsername((String)modelMap.get("username"));
+        String username = getLoggedInUsername(modelMap);
+        editedTask.setUsername(username);
         toDoService.updateTask(editedTask);
         return "redirect:task-list";
     }
@@ -68,5 +79,10 @@ public class ToDoController {
     @RequestMapping(value = "cancel-edit-task", method = RequestMethod.POST)
     public String cancelUpdateTask() {
         return "redirect:task-list";
+    }
+
+    private static String getLoggedInUsername(ModelMap modelMap) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }

@@ -1,11 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="common/header.jsp" %>
+<%@ include file="common/navigation.jsp" %>
 
-<html>
-<head>
-    <title>Do what you have ToDo&reg;!</title>
-    <link href="webjars/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
 <div class="container">
     <h1 class="display-6">Welcome to your ToDo&reg; dashboard, ${username}</h1>
     <hr>
@@ -24,14 +19,15 @@
                 <td>${task.description}</td>
                 <td>${task.targetDate}</td>
                 <td>${task.done}</td>
-                <td><a href="edit-task?id=${task.id}" class="btn btn-success">Edit task</a> <a href="delete-task?id=${task.id}" class="btn btn-danger">Delete</a></td>
+                <td><a href="edit-task?id=${task.id}" title="Edit Task" class="btn btn-success"><i
+                        class="fa-regular fa-pen-to-square"></i></a> <a
+                        href="delete-task?id=${task.id}" title="Delete Task" class="btn btn-danger"><i
+                        class="fa-regular fa-trash-can"></i></a></td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
-    <a href="add-task" class="btn btn-primary"><i class="fa-solid fa-clipboard"></i> Add Task</a>
+    <a href="add-task" class="btn btn-primary"><i class="fa-solid fa-folder-plus"></i> Add Task</a>
 </div>
-<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-<script src="webjars/jquery/3.7.1/jquery.min.js"></script>
-</body>
-</html>
+
+<%@ include file="common/footer.jsp" %>

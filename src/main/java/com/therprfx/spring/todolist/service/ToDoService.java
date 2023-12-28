@@ -21,17 +21,17 @@ public class ToDoService {
         taskList.add(new Todo(++taskCount, "rprfelix", "Learn Azure", LocalDate.now().plusYears(1), false));
     }
 
-    public List<Todo> findByUsername(String username){
-        return taskList;
+    public List<Todo> findByUsername(String username) {
+        Predicate<? super Todo> predicate = taskList -> taskList.getUsername().equalsIgnoreCase(username);
+        return taskList.stream().filter(predicate).toList();
     }
 
-    public Todo findById(int id){
+    public Todo findById(int id) {
         Predicate<? super Todo> predicate = taskList -> taskList.getId() == id;
-        Todo task = taskList.stream().filter(predicate).findFirst().get();
-        return task;
+        return taskList.stream().filter(predicate).findFirst().get();
     }
 
-    public void deleteById(int id){
+    public void deleteById(int id) {
         Predicate<? super Todo> predicate = taskList -> taskList.getId() == id;
         taskList.removeIf(predicate);
     }
@@ -41,10 +41,9 @@ public class ToDoService {
         taskList.add(editedTask);
     }
 
-    public void addNewTask(String username, String description, LocalDate targetDate, boolean done){
+    public void addNewTask(String username, String description, LocalDate targetDate, boolean done) {
         Todo newTask = new Todo(++taskCount, username, description, targetDate, done);
         taskList.add(newTask);
-
     }
 
     public static int getTaskCount() {
