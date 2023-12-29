@@ -6,8 +6,8 @@ import com.therprfx.spring.todolist.service.ToDoService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.ModelMap;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,16 +17,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import java.time.LocalDate;
 import java.util.List;
 
-//@Controller
+@Controller
 @SessionAttributes("username")
-public class ToDoController {
+public class ToDoControllerJpa {
 
-    private ToDoService toDoService;
+    private ToDoRepository toDoRepository;
 
-
-    public ToDoController(ToDoService toDoService) {
-        this.toDoService = toDoService;
-
+    public ToDoControllerJpa(ToDoService toDoService, ToDoRepository toDoRepository) {
+        this.toDoRepository = toDoRepository;
     }
 
     @RequestMapping("welcome")
@@ -37,7 +35,7 @@ public class ToDoController {
     @RequestMapping("task-list")
     public String listAllTasks(ModelMap modelMap) {
         String username = getLoggedInUsername(modelMap);
-        List<Todo> taskList = toDoService.findByUsername(username);
+        List<Todo> taskList = toDoRepository.findByUsername(username);
         modelMap.addAttribute("tasks", taskList);
         return "tasklist";
     }
@@ -55,19 +53,20 @@ public class ToDoController {
     public String addNewTask(ModelMap modelMap, @Valid Todo newTask, BindingResult result) {
         //Todo validations
         String username = getLoggedInUsername(modelMap);
-        toDoService.addNewTask(username, newTask.getDescription(), newTask.getTargetDate(), false);
+        newTask.setUsername(username);
+        toDoRepository.save(newTask);
         return "redirect:task-list";
     }
 
     @RequestMapping("delete-task")
     public String deleteTask(@RequestParam int id) {
-        toDoService.deleteById(id);
+        toDoRepository.deleteById(id);
         return "redirect:task-list";
     }
 
     @RequestMapping(value = "edit-task", method = RequestMethod.GET)
     public String showEditTaskForm(@RequestParam int id, ModelMap modelMap) {
-        Todo taskToUpdate = toDoService.findById(id);
+        Todo taskToUpdate = toDoRepository.findById(id);
         modelMap.addAttribute("newTaskForm", taskToUpdate);
         modelMap.put("action", "Save Task");
         return "addnewtask";
@@ -77,7 +76,7 @@ public class ToDoController {
     public String updateTask(ModelMap modelMap, @Valid Todo editedTask) {
         String username = getLoggedInUsername(modelMap);
         editedTask.setUsername(username);
-        toDoService.updateTask(editedTask);
+        toDoRepository.save(editedTask);
         return "redirect:task-list";
     }
 

@@ -27,7 +27,9 @@
         </div>
     </form:form>
 </div>
+
 <%@ include file="common/footer.jsp" %>
+
 <script type="text/javascript">
     $('#targetDate').datepicker({
         format: 'dd-mm-yyyy'
